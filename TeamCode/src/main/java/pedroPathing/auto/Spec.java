@@ -1,4 +1,4 @@
-package pedroPathing.examples;
+package pedroPathing.auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
@@ -25,8 +25,8 @@ import pedroPathing.constants.LConstants;
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "Example Auto Blue", group = "Examples")
-public class ExampleBucketAuto extends OpMode {
+@Autonomous(name = "Specywecy", group = "Examples")
+public class Spec extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -45,16 +45,16 @@ public class ExampleBucketAuto extends OpMode {
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
 
     /** Start Pose of our robot */
-    private final Pose startPose = new Pose(9, 111, Math.toRadians(270));
+    private final Pose startPose = new Pose(10.525, 57.090, 0);
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
-    private final Pose scorePose = new Pose(14, 129, Math.toRadians(315));
+    private final Pose scorePose = new Pose(38, 72, Math.toRadians(0));
 
     /** Lowest (First) Sample from the Spike Mark */
-    private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(16.6, 24, Math.toRadians(0));
 
     /** Middle (Second) Sample from the Spike Mark */
-    private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0));
+    private final Pose pickup2Pose = new Pose(19.385, 14.538, Math.toRadians(0));
 
     /** Highest (Third) Sample from the Spike Mark */
     private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0));
@@ -67,8 +67,8 @@ public class ExampleBucketAuto extends OpMode {
     private final Pose parkControlPose = new Pose(60, 98, Math.toRadians(90));
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
-    private Path scorePreload, park;
-    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
+    private Path  park;
+    private PathChain scorePreload, grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
@@ -90,22 +90,35 @@ public class ExampleBucketAuto extends OpMode {
          * Here is a explanation of the difference between Paths and PathChains <https://pedropathing.com/commonissues/pathtopathchain.html> */
 
         /* This is our scorePreload path. We are using a BezierLine, which is a straight line. */
-        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scorePose)));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
+        scorePreload = follower.pathBuilder().addPath(new BezierLine(new Point(10.525, 57.090, Point.CARTESIAN),
+                new Point(37.231, 69.000, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(0)
+                .build();
 
         /* Here is an example for Constant Interpolation
         scorePreload.setConstantInterpolation(startPose.getHeading()); */
 
         /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scorePose), new Point(pickup1Pose)))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+                .addPath(new BezierCurve(new Point(37.231, 69.000, Point.CARTESIAN),
+                                new Point(4.154, 11.769, Point.CARTESIAN),
+                                new Point(136.846, 34.385, Point.CARTESIAN),
+                                new Point(16.154, 21.923, Point.CARTESIAN),
+                                new Point(25, 25, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         /* This is our scorePickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickup1Pose), new Point(scorePose)))
-                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
+                .addPath(new BezierCurve(new Point(25, 25, Point.CARTESIAN),
+                                new Point(111.462, 27.231, Point.CARTESIAN),
+                                new Point(44.769, 9.000, Point.CARTESIAN),
+                                new Point(25.692, 16.385, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -255,7 +268,6 @@ public class ExampleBucketAuto extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.addData("isbusy?", follower.isBusy());
         telemetry.update();
     }
 

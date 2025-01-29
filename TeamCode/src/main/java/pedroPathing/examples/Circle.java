@@ -3,6 +3,8 @@ package pedroPathing.examples;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -45,15 +47,43 @@ public class Circle extends OpMode {
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
+        follower.setStartingPose(new Pose(10.525, 57.090, 0));
 
         circle = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(0,0, Point.CARTESIAN), new Point(RADIUS,0, Point.CARTESIAN), new Point(RADIUS, RADIUS, Point.CARTESIAN)))
-                .addPath(new BezierCurve(new Point(RADIUS, RADIUS, Point.CARTESIAN), new Point(RADIUS,2*RADIUS, Point.CARTESIAN), new Point(0,2*RADIUS, Point.CARTESIAN)))
-                .addPath(new BezierCurve(new Point(0,2*RADIUS, Point.CARTESIAN), new Point(-RADIUS,2*RADIUS, Point.CARTESIAN), new Point(-RADIUS, RADIUS, Point.CARTESIAN)))
-                .addPath(new BezierCurve(new Point(-RADIUS, RADIUS, Point.CARTESIAN), new Point(-RADIUS,0, Point.CARTESIAN), new Point(0,0, Point.CARTESIAN)))
+                .addPath(
+                        // Line 1
+                        new BezierLine(
+                                new Point(10.525, 57.090, Point.CARTESIAN),
+                                new Point(37.231, 69.000, Point.CARTESIAN)
+                        )
+                )
+                .setPathEndTimeoutConstraint(0.3)
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .addPath(
+                        // Line 2
+                        new BezierCurve(
+                                new Point(37.231, 69.000, Point.CARTESIAN),
+                                new Point(4.154, 11.769, Point.CARTESIAN),
+                                new Point(136.846, 34.385, Point.CARTESIAN),
+                                new Point(16.154, 21.923, Point.CARTESIAN),
+                                new Point(25, 25, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setPathEndTimeoutConstraint(5)
+                .addPath(
+                        // Line 3
+                        new BezierCurve(
+                                new Point(25, 25, Point.CARTESIAN),
+                                new Point(111.462, 27.231, Point.CARTESIAN),
+                                new Point(44.769, 9.000, Point.CARTESIAN),
+                                new Point(25.692, 16.385, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
-        follower.followPath(circle);
+        follower.followPath(circle, true);
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryA.addLine("This will run in a roughly circular shape of radius " + RADIUS
@@ -69,9 +99,6 @@ public class Circle extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        if (follower.atParametricEnd()) {
-            follower.followPath(circle);
-        }
 
         follower.telemetryDebug(telemetryA);
     }
