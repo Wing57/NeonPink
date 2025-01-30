@@ -93,6 +93,14 @@ public class Lift {
         targetX = pos;
     }
 
+    public boolean pivotAtSetpoint() {
+        return controllerV.atSetPoint();
+    }
+
+    public boolean extendAtSetpoint() {
+        return controllerX.atSetPoint();
+    }
+
     public double getExtension() {
         return rightPivot.getCurrentPosition();
     }

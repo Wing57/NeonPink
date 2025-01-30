@@ -14,7 +14,9 @@ import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
+import subsystems.Lift;
 import teleOp.Darius;
+import util.actions.LiftActions;
 
 /**
  * This is an example auto that showcases movement and control of two servos autonomously.
@@ -29,7 +31,8 @@ import teleOp.Darius;
 @Autonomous(name = "Specywecy", group = "Examples")
 public class Spec extends OpMode {
 
-    private Darius darius;
+    private Lift lift;
+    private LiftActions liftActions;
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -59,6 +62,7 @@ public class Spec extends OpMode {
         scorePreload = follower.pathBuilder().addPath(new BezierLine(new Point(startPose),
                 preloadDunkSpot))
                 .setConstantHeadingInterpolation(0)
+                .addTemporalCallback(0, () -> liftActions.liftA.extendSpecimen())
                 .build();
 
         ferryFirst = follower.pathBuilder().addPath(new BezierCurve(preloadDunkSpot,
@@ -217,6 +221,8 @@ public class Spec extends OpMode {
     @Override
     public void loop() {
 
+        lift.updatePIDF();
+
         // These loop the movements of the robot
         follower.update();
         autonomousPathUpdate();
@@ -233,8 +239,10 @@ public class Spec extends OpMode {
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void init() {
-        darius = new Darius();
-        darius.hardwareMap = hardwareMap;
+
+        lift = new Lift(hardwareMap, telemetry);
+        liftActions = new LiftActions(lift);
+
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
@@ -243,6 +251,8 @@ public class Spec extends OpMode {
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
         buildPaths();
+
+
     }
 
     /** This method is called continuously after Init while waiting for "play". **/
