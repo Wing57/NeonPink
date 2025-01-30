@@ -1,4 +1,4 @@
-package pedroPathing.util;
+package util.navx;
 
 import java.util.Arrays;
 

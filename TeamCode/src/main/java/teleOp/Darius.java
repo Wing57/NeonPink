@@ -1,31 +1,25 @@
-package pedroPathing.teleop;
+package teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import pedroPathing.constants.Constants.Servos;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import pedroPathing.constants.Constants;
 
 
 import java.util.Arrays;
 import java.util.List;
 
-import pedroPathing.util.AHRS;
+import util.navx.AHRS;
 
 @TeleOp
 public class Darius extends LinearOpMode {
@@ -150,19 +144,7 @@ public class Darius extends LinearOpMode {
                 navx.zeroYaw();
             }
 
-            controllerV.setPID(pv, iv, dv);
-            //double pivotPos = toDegrees(extend2.getCurrentPosition());
-            double pivotPos = getRawPivot();
-            double pidV = controllerV.calculate(pivotPos, targetV);
-
-            controllerX.setPID(px, ix, dx);
-            double extensionPos = getExtension();
-            double pidX = controllerX.calculate(extensionPos, targetX);
-
-            leftPivot.setPower(pidV);
-            rightPivot.setPower(pidV);
-            extend1.setPower(pidX);
-            extend2.setPower(pidX);
+            liftControl();
             twist.setPosition(twistPos);
 
             leftLED.setPosition(0.722);
@@ -369,6 +351,22 @@ public class Darius extends LinearOpMode {
 
 
         }
+    }
+
+    public void liftControl() {
+        controllerV.setPID(pv, iv, dv);
+        //double pivotPos = toDegrees(extend2.getCurrentPosition());
+        double pivotPos = getRawPivot();
+        double pidV = controllerV.calculate(pivotPos, targetV);
+
+        controllerX.setPID(px, ix, dx);
+        double extensionPos = getExtension();
+        double pidX = controllerX.calculate(extensionPos, targetX);
+
+        leftPivot.setPower(pidV);
+        rightPivot.setPower(pidV);
+        extend1.setPower(pidX);
+        extend2.setPower(pidX);
     }
 
     public void drive(double y, double x, double rx) {

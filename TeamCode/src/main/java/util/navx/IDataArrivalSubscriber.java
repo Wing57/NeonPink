@@ -1,4 +1,4 @@
-package pedroPathing.util;
+package util.navx;
 
 public interface IDataArrivalSubscriber {
     public void untimestampedDataReceived( long system_timestamp, Object kind );

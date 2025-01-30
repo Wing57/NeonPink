@@ -1,4 +1,4 @@
-package pedroPathing.auto;
+package auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
@@ -14,6 +14,7 @@ import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
+import teleOp.Darius;
 
 /**
  * This is an example auto that showcases movement and control of two servos autonomously.
@@ -27,6 +28,8 @@ import pedroPathing.constants.LConstants;
 
 @Autonomous(name = "Specywecy", group = "Examples")
 public class Spec extends OpMode {
+
+    private Darius darius;
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -230,6 +233,8 @@ public class Spec extends OpMode {
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void init() {
+        darius = new Darius();
+        darius.hardwareMap = hardwareMap;
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();

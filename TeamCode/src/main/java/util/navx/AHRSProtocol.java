@@ -1,4 +1,4 @@
-package pedroPathing.util;
+package util.navx;
 
 public class AHRSProtocol extends IMUProtocol {
 
