@@ -15,7 +15,6 @@ import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 import subsystems.Lift;
-import teleOp.Darius;
 import util.actions.LiftActions;
 
 /**
@@ -62,21 +61,21 @@ public class Spec extends OpMode {
         scorePreload = follower.pathBuilder().addPath(new BezierLine(new Point(startPose),
                 preloadDunkSpot))
                 .setConstantHeadingInterpolation(0)
-                .addTemporalCallback(0, () -> liftActions.liftA.extendSpecimen())
                 .build();
 
         ferryFirst = follower.pathBuilder().addPath(new BezierCurve(preloadDunkSpot,
                 new Point(0.797, 7.176, Point.CARTESIAN),
+
                 new Point(111.628, 59.003, Point.CARTESIAN),
                 new Point(77.502, 17.223, Point.CARTESIAN),
-                firstFerrySpot))
+                        new Point(19.6, 25, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
-        ferrySecond = follower.pathBuilder().addPath(new BezierCurve(firstFerrySpot,
+        ferrySecond = follower.pathBuilder().addPath(new BezierCurve(new Point(19.6, 25, Point.CARTESIAN),
                 new Point(108.917, 25.674, Point.CARTESIAN),
                 new Point(66.020, 10.684, Point.CARTESIAN),
-                secondFerrySpot))
+                        new Point(19.6, 15, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
@@ -115,7 +114,9 @@ public class Spec extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
+                //liftActions.liftA.extendSpecimen();
                 setPathState(1);
+
                 break;
             case 1:
 
@@ -233,6 +234,7 @@ public class Spec extends OpMode {
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("isbusy?", follower.isBusy());
+        telemetry.addData("completetion rate:", follower.getCurrentTValue());
         telemetry.update();
     }
 
@@ -246,6 +248,9 @@ public class Spec extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
+
+        actionTimer = new Timer();
+        actionTimer.resetTimer();
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
@@ -264,6 +269,7 @@ public class Spec extends OpMode {
     @Override
     public void start() {
         opmodeTimer.resetTimer();
+        actionTimer.resetTimer();
         setPathState(0);
     }
 
