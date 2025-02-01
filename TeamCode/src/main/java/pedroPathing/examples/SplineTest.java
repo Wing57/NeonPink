@@ -103,7 +103,7 @@ public class SplineTest extends ActionOpMode {
     private final Pose startPose = new Pose(10, 57, Math.toRadians(0));
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
-    public PathChain scorePreload, scoreSecond, firstFerry, secondFerry, scoreFirst, grabSecond;
+    public PathChain scorePreload, scoreSecond, firstFerry, secondFerry, scoreFirst, grabSecond, grabThird, scoreThird;
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
@@ -166,6 +166,20 @@ public class SplineTest extends ActionOpMode {
                 .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
                 .setConstantHeadingInterpolation(0)
                                 .build();
+
+        grabThird = follower.pathBuilder().addPath(new BezierCurve(new Point(42.000, 74.000, Point.CARTESIAN),
+                new Point(23.308, 73.615, Point.CARTESIAN),
+                new Point(45.692, 23.077, Point.CARTESIAN),
+                new Point(16.000, 29.000, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(0)
+                .addParametricCallback(.2, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.intakeSpecimen(), liftActions.liftA.pivotUp())))
+                .build();
+
+        scoreThird = follower.pathBuilder().addPath(new BezierLine(new Point(16, 29, Point.CARTESIAN), /* Control Point */ new Point(42, 76.000)))
+                .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen(), servoActions.armA.normal())))
+                .setConstantHeadingInterpolation(0)
+                .build();
+
     }
 
     private void buildTaskList() {
@@ -195,6 +209,14 @@ public class SplineTest extends ActionOpMode {
         PathChainTask scoreSecondTask = new PathChainTask(scoreSecond, 1.4)
                 .addWaitAction(0.5, servoActions.scoreSpecimen());
         tasks.add(scoreSecondTask);
+
+        PathChainTask grabThirdTask = new PathChainTask(grabThird, 1.3)
+                .addWaitAction(0.5, servoActions.acquireSpecimen());
+        tasks.add(grabThirdTask);
+
+        PathChainTask scoreThirdTask = new PathChainTask(scoreThird, 1.4)
+                .addWaitAction(0.5, servoActions.scoreSpecimen());
+        tasks.add(scoreThirdTask);
     }
 
     private void runTasks() {
