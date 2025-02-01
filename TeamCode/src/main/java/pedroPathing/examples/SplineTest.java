@@ -1,6 +1,8 @@
 package pedroPathing.examples;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
@@ -18,9 +20,11 @@ import java.util.List;
 
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
+import subsystems.Arm;
 import subsystems.Lift;
 import util.actions.ActionOpMode;
 import util.actions.LiftActions;
+import util.actions.ServoActions;
 
 /**
  * This is an example auto that showcases movement and control of two servos autonomously.
@@ -78,7 +82,10 @@ public class SplineTest extends ActionOpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private Lift lift;
+    private Arm arm;
+
     private LiftActions liftActions;
+    private ServoActions servoActions;
 
     private static final double PATH_COMPLETION_T = 0.982;
 
@@ -102,8 +109,9 @@ public class SplineTest extends ActionOpMode {
      * It is necessary to do this so that all the paths are built before the auto starts. **/
     public void buildPaths() {
 
-        scorePreload = follower.pathBuilder().addPath(new BezierLine(new Point(10.525, 57.090, Point.CARTESIAN),
-                new Point(39, 70, Point.CARTESIAN)))
+        scorePreload = follower.pathBuilder().addPath(new BezierLine(new Point(10, 57, Point.CARTESIAN),
+                new Point(42, 70, Point.CARTESIAN)))
+                .addTemporalCallback(0, ()-> run(new SequentialAction(liftActions.liftA.pivotSpecimen(), liftActions.liftA.extendSpecimen())))
                 .setConstantHeadingInterpolation(0).build();
 
         /* Here is an example for Constant Interpolation
@@ -111,13 +119,16 @@ public class SplineTest extends ActionOpMode {
 
         /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         firstFerry = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(39.000, 70.000, Point.CARTESIAN),
+                .addPath(new BezierCurve(new Point(42.000, 70.000, Point.CARTESIAN),
                         new Point(18.923, 29.077, Point.CARTESIAN),
                         new Point(24.000, 42.000, Point.CARTESIAN),
                         new Point(56.538, 39.462, Point.CARTESIAN),
                         new Point(66.000, 26.077, Point.CARTESIAN)))
+                .addTemporalCallback(0.3, ()-> run(liftActions.liftA.extendZero()))
+                .setConstantHeadingInterpolation(0)
                 .addPath(new BezierLine(new Point(66.000, 26.077, Point.CARTESIAN),
                         new Point(20.308, 25.615, Point.CARTESIAN)))
+              //  .addParametricCallback(.2, ()-> run (liftActions.liftA.pivotUp()))
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -125,51 +136,64 @@ public class SplineTest extends ActionOpMode {
                 .addPath(new BezierCurve(new Point(20.308, 25.615, Point.CARTESIAN),
                         new Point(58.154, 32.769, Point.CARTESIAN),
                         new Point(63.231, 14.538, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(0)
                 .addPath(new BezierLine(new Point(63.231, 14.538, Point.CARTESIAN),
-                        new Point(13.385, 14.538, Point.CARTESIAN)))
+                        new Point(16, 14.538, Point.CARTESIAN)))
+                .addParametricCallback(.2, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.intakeSpecimen())))
+
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our grabPickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         scoreFirst = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(13.385, 14.538, Point.CARTESIAN),
-                        new Point(39.000, 68.000, Point.CARTESIAN)))
+                .addPath(new BezierCurve(new Point(16, 14.538, Point.CARTESIAN),
+                        new Point(20.308, 65.769, Point.CARTESIAN),
+                        new Point(42, 68.000, Point.CARTESIAN)))
+                .addTemporalCallback(0, () -> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
+
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabSecond = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(39.000, 68.000, Point.CARTESIAN),
-                        new Point(15.231, 29.769, Point.CARTESIAN)))
+                .addPath(new BezierCurve(new Point(42, 68.000, Point.CARTESIAN),
+                        new Point(23.308, 73.615, Point.CARTESIAN),
+                        new Point(45.692, 23.077, Point.CARTESIAN),
+                        new Point(16, 29, Point.CARTESIAN)))
+                .addParametricCallback(.2, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.intakeSpecimen(), liftActions.liftA.pivotUp())))
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our park path. We are using a BezierCurve with 3 points, which is a curved line that is curved based off of the control point */
-        scoreSecond = follower.pathBuilder().addPath(new BezierLine(new Point(15.231, 29.769, Point.CARTESIAN), /* Control Point */ new Point(39.000, 72.000)))
-                        .setConstantHeadingInterpolation(0)
+        scoreSecond = follower.pathBuilder().addPath(new BezierLine(new Point(16, 29, Point.CARTESIAN), /* Control Point */ new Point(42, 74.000)))
+                .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
+                .setConstantHeadingInterpolation(0)
                                 .build();
     }
 
     private void buildTaskList() {
         tasks.clear();
 
-        PathChainTask preloadTask = new PathChainTask(scorePreload, 1)
-                .addWaitAction(0.2, liftActions.liftA.extendSpecimen());
+        PathChainTask preloadTask = new PathChainTask(scorePreload, 1.8)
+                .addWaitAction(0.9, servoActions.scoreSpecimen());
         tasks.add(preloadTask);
 
         //TODO: tbh could merge ferries no?
-        PathChainTask firstFerryTask = new PathChainTask(firstFerry, 0);
+        PathChainTask firstFerryTask = new PathChainTask(firstFerry, 0.2)
+                .addWaitAction(0, liftActions.liftA.pivotUp());
         tasks.add(firstFerryTask);
 
-        PathChainTask secondFerryTask = new PathChainTask(secondFerry, 1);
+        PathChainTask secondFerryTask = new PathChainTask(secondFerry, 1.3)
+                .addWaitAction(0.5, servoActions.acquireSpecimen());
         tasks.add(secondFerryTask);
 
-        PathChainTask scoreFirstTask = new PathChainTask(scoreFirst, 1)
-                .addWaitAction(0.2, liftActions.liftA.extendSpecimen());
+        PathChainTask scoreFirstTask = new PathChainTask(scoreFirst, 1.4)
+                .addWaitAction(0.5, servoActions.scoreSpecimen());
         tasks.add(scoreFirstTask);
 
-        PathChainTask grabSecondTask = new PathChainTask(grabSecond, 1);
+        PathChainTask grabSecondTask = new PathChainTask(grabSecond, 1.3)
+                .addWaitAction(0.5, servoActions.acquireSpecimen());
         tasks.add(grabSecondTask);
 
-        PathChainTask scoreSecondTask = new PathChainTask(scoreSecond, 1)
-                .addWaitAction(0.2, liftActions.liftA.extendSpecimen());
+        PathChainTask scoreSecondTask = new PathChainTask(scoreSecond, 1.4)
+                .addWaitAction(0.5, servoActions.scoreSpecimen());
         tasks.add(scoreSecondTask);
     }
 
@@ -231,7 +255,12 @@ public class SplineTest extends ActionOpMode {
         opmodeTimer.resetTimer();
 
         lift = new Lift(hardwareMap, telemetry);
+        arm = new Arm(hardwareMap);
+
         liftActions = new LiftActions(lift);
+        servoActions = new ServoActions(arm);
+
+        run(new ParallelAction(servoActions.armA.close(), servoActions.armA.armClip(), servoActions.armA.normal(), servoActions.armA.pitchSpecimen()));
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
@@ -272,6 +301,15 @@ public class SplineTest extends ActionOpMode {
         telemetry.addData("Running Actions", runningActions.size());
 
         telemetry.update();
+    }
+
+    @Override
+    public void init_loop() {
+        super.loop();
+
+        runTasks();
+
+        lift.updatePIDF();
     }
 }
 

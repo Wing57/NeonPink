@@ -56,6 +56,8 @@ public class LiftActions {
             return setPivotPosition(Constants.Lift.UP);
         }
 
+        public Action pivotSpecimen() { return setPivotPosition(300); }
+
         public Action pivotDown() {
             return setPivotPosition(Constants.Lift.DOWN);
         }
