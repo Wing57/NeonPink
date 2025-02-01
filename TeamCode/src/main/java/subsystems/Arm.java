@@ -32,4 +32,8 @@ public class Arm {
         claw.setPosition(pos);
     }
 
+    public void updateServos() {
+
+    }
+
 }
