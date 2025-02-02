@@ -29,19 +29,28 @@ public class ServoActions {
     public Action acquireSpecimen() {
         return new SequentialAction(
                 armA.close(),
-                new SleepAction(0.5),
+                new SleepAction(0.3),
                 armA.armClip(),
                 armA.normal()
         );
     }
 
-    public Action scoreSpecimen() {
+    public Action scoreSpecimenDrag() {
         return new SequentialAction(
                 armA.armGanch(),
                 new SleepAction(1),
                 armA.open()
         );
     }
+
+    public Action scoreSpecimen() {
+        return new SequentialAction(
+                armA.armGanch(),
+                new SleepAction(0.6),
+                armA.open()
+        );
+    }
+
 
     public class ArmA {
         public Action setClaw(double pos) {
