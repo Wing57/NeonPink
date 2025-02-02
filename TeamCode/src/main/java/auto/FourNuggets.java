@@ -1,4 +1,4 @@
-package pedroPathing.examples;
+package auto;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -7,13 +7,11 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
-import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +34,8 @@ import util.actions.ServoActions;
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "Curvy Test", group = "Examples")
-public class SplineTest extends ActionOpMode {
+@Autonomous(name = "4 nugget", group = "Examples")
+public class FourNuggets extends ActionOpMode {
 
     private static class WaitAction {
         double triggerTime; // seconds into the waiting phase
@@ -103,14 +101,14 @@ public class SplineTest extends ActionOpMode {
     private final Pose startPose = new Pose(10, 57, Math.toRadians(0));
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
-    public PathChain scorePreload, scoreSecond, firstFerry, secondFerry, scoreFirst, grabSecond, grabThird, scoreThird;
+    public PathChain scorePreload, scoreSecond, firstFerry, secondFerry, scoreFirst, grabSecond, grabThird, scoreThird, park;
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
     public void buildPaths() {
 
         scorePreload = follower.pathBuilder().addPath(new BezierLine(new Point(10, 57, Point.CARTESIAN),
-                new Point(42, 70, Point.CARTESIAN)))
+                        new Point(42, 70, Point.CARTESIAN)))
                 .addTemporalCallback(0, ()-> run(new SequentialAction(liftActions.liftA.pivotSpecimen(), liftActions.liftA.extendSpecimen())))
                 .setConstantHeadingInterpolation(0).build();
 
@@ -123,60 +121,68 @@ public class SplineTest extends ActionOpMode {
                         new Point(18.923, 29.077, Point.CARTESIAN),
                         new Point(24.000, 42.000, Point.CARTESIAN),
                         new Point(56.538, 39.462, Point.CARTESIAN),
-                        new Point(66.000, 26.077, Point.CARTESIAN)))
+                        new Point(60.000, 26.077, Point.CARTESIAN)))
                 .addTemporalCallback(0.3, ()-> run(liftActions.liftA.extendZero()))
                 .setConstantHeadingInterpolation(0)
-                .addPath(new BezierLine(new Point(66.000, 26.077, Point.CARTESIAN),
-                        new Point(20.308, 25.615, Point.CARTESIAN)))
-              //  .addParametricCallback(.2, ()-> run (liftActions.liftA.pivotUp()))
+                .addPath(new BezierLine(new Point(60.000, 26.077, Point.CARTESIAN),
+                        new Point(23.308, 25.615, Point.CARTESIAN)))
+                //  .addParametricCallback(.2, ()-> run (liftActions.liftA.pivotUp()))
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         secondFerry = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(20.308, 25.615, Point.CARTESIAN),
+                .addPath(new BezierCurve(new Point(23.308, 25.615, Point.CARTESIAN),
                         new Point(58.154, 32.769, Point.CARTESIAN),
-                        new Point(63.231, 14.538, Point.CARTESIAN)))
+                        new Point(60.231, 14.538, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(0)
-                .addPath(new BezierLine(new Point(63.231, 14.538, Point.CARTESIAN),
-                        new Point(16, 14.538, Point.CARTESIAN)))
+                .addPath(new BezierLine(new Point(60.231, 14.538, Point.CARTESIAN),
+                        new Point(15.5, 14.538, Point.CARTESIAN)))
                 .addParametricCallback(.2, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.intakeSpecimen())))
 
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our grabPickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         scoreFirst = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(16, 14.538, Point.CARTESIAN),
+                .addPath(new BezierCurve(new Point(15.5, 14.538, Point.CARTESIAN),
                         new Point(20.308, 65.769, Point.CARTESIAN),
-                        new Point(42, 68.000, Point.CARTESIAN)))
+                        new Point(42, 69.500, Point.CARTESIAN)))
                 .addTemporalCallback(0, () -> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
 
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabSecond = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(42, 68.000, Point.CARTESIAN),
+                .addPath(new BezierCurve(new Point(42, 69.500, Point.CARTESIAN),
                         new Point(23.308, 73.615, Point.CARTESIAN),
                         new Point(45.692, 23.077, Point.CARTESIAN),
-                        new Point(16, 29, Point.CARTESIAN)))
+                        new Point(15.5, 29, Point.CARTESIAN)))
                 .addParametricCallback(.2, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.intakeSpecimen(), liftActions.liftA.pivotUp())))
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our park path. We are using a BezierCurve with 3 points, which is a curved line that is curved based off of the control point */
-        scoreSecond = follower.pathBuilder().addPath(new BezierLine(new Point(16, 29, Point.CARTESIAN), /* Control Point */ new Point(42, 74.000)))
+        scoreSecond = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(42, 71.000)))
                 .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
                 .setConstantHeadingInterpolation(0)
-                                .build();
+                .build();
 
-        grabThird = follower.pathBuilder().addPath(new BezierCurve(new Point(42.000, 74.000, Point.CARTESIAN),
-                new Point(23.308, 73.615, Point.CARTESIAN),
-                new Point(45.692, 23.077, Point.CARTESIAN),
-                new Point(16.000, 29.000, Point.CARTESIAN)))
+        grabThird = follower.pathBuilder().addPath(new BezierCurve(new Point(42.000, 71.000, Point.CARTESIAN),
+                        new Point(23.308, 73.615, Point.CARTESIAN),
+                        new Point(45.692, 23.077, Point.CARTESIAN),
+                        new Point(15.5, 29.000, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(0)
                 .addParametricCallback(.2, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.intakeSpecimen(), liftActions.liftA.pivotUp())))
                 .build();
 
-        scoreThird = follower.pathBuilder().addPath(new BezierLine(new Point(16, 29, Point.CARTESIAN), /* Control Point */ new Point(42, 76.000)))
+        scoreThird = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(42, 73.000)))
                 .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen(), servoActions.armA.normal())))
+                .setConstantHeadingInterpolation(0)
+                .build();
+
+        park = follower.pathBuilder().addPath(new BezierCurve(new Point(42.000, 73.000, Point.CARTESIAN),
+                        new Point(10.846, 74.077, Point.CARTESIAN),
+                        new Point(45.692, 23.077, Point.CARTESIAN),
+                        new Point(12.692, 14.308, Point.CARTESIAN)))
+                .addParametricCallback(0.4, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.armA.armClip())))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
@@ -185,8 +191,8 @@ public class SplineTest extends ActionOpMode {
     private void buildTaskList() {
         tasks.clear();
 
-        PathChainTask preloadTask = new PathChainTask(scorePreload, 1.8)
-                .addWaitAction(0.9, servoActions.scoreSpecimen());
+        PathChainTask preloadTask = new PathChainTask(scorePreload, 1)
+                .addWaitAction(0.6, servoActions.scoreSpecimenDrag());
         tasks.add(preloadTask);
 
         //TODO: tbh could merge ferries no?
@@ -194,29 +200,32 @@ public class SplineTest extends ActionOpMode {
                 .addWaitAction(0, liftActions.liftA.pivotUp());
         tasks.add(firstFerryTask);
 
-        PathChainTask secondFerryTask = new PathChainTask(secondFerry, 1.3)
+        PathChainTask secondFerryTask = new PathChainTask(secondFerry, 0.8)
                 .addWaitAction(0.5, servoActions.acquireSpecimen());
         tasks.add(secondFerryTask);
 
-        PathChainTask scoreFirstTask = new PathChainTask(scoreFirst, 1.4)
+        PathChainTask scoreFirstTask = new PathChainTask(scoreFirst, 0.9)
                 .addWaitAction(0.5, servoActions.scoreSpecimen());
         tasks.add(scoreFirstTask);
 
-        PathChainTask grabSecondTask = new PathChainTask(grabSecond, 1.3)
-                .addWaitAction(0.5, servoActions.acquireSpecimen());
+        PathChainTask grabSecondTask = new PathChainTask(grabSecond, 0.5)
+                .addWaitAction(0.3, servoActions.acquireSpecimen());
         tasks.add(grabSecondTask);
 
-        PathChainTask scoreSecondTask = new PathChainTask(scoreSecond, 1.4)
-                .addWaitAction(0.5, servoActions.scoreSpecimen());
+        PathChainTask scoreSecondTask = new PathChainTask(scoreSecond, 0.9)
+                .addWaitAction(0.65, servoActions.scoreSpecimen());
         tasks.add(scoreSecondTask);
 
-        PathChainTask grabThirdTask = new PathChainTask(grabThird, 1.3)
-                .addWaitAction(0.5, servoActions.acquireSpecimen());
+        PathChainTask grabThirdTask = new PathChainTask(grabThird, .5)
+                .addWaitAction(0.3, servoActions.acquireSpecimen());
         tasks.add(grabThirdTask);
 
-        PathChainTask scoreThirdTask = new PathChainTask(scoreThird, 1.4)
-                .addWaitAction(0.5, servoActions.scoreSpecimen());
+        PathChainTask scoreThirdTask = new PathChainTask(scoreThird, 0.9)
+                .addWaitAction(0.6, servoActions.scoreSpecimen());
         tasks.add(scoreThirdTask);
+
+        PathChainTask pathTask = new PathChainTask(park, 0);
+        tasks.add(pathTask);
     }
 
     private void runTasks() {
