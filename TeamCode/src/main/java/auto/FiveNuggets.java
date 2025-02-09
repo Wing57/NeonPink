@@ -3,6 +3,7 @@ package auto;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
@@ -109,7 +110,7 @@ public class FiveNuggets extends ActionOpMode {
 
         scorePreload = follower.pathBuilder().addPath(new BezierLine(new Point(10, 57, Point.CARTESIAN),
                         new Point(42, 70, Point.CARTESIAN)))
-                .addTemporalCallback(0, ()-> run(new SequentialAction(liftActions.liftA.pivotSpecimen(), liftActions.liftA.extendSpecimen())))
+                .addTemporalCallback(0, ()-> run(new SequentialAction(liftActions.liftA.pivotSpecimen(), servoActions.armA.armClip(), servoActions.armA.pitchSpecimen(), new SleepAction(0.3), liftActions.liftA.extendSpecimen())))
                 .setConstantHeadingInterpolation(0).build();
 
         /* Here is an example for Constant Interpolation
@@ -145,14 +146,14 @@ public class FiveNuggets extends ActionOpMode {
         scoreFirst = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(15.5, 14.538, Point.CARTESIAN),
                         new Point(20.308, 65.769, Point.CARTESIAN),
-                        new Point(42, 69.500, Point.CARTESIAN)))
+                        new Point(42.4, 69.500, Point.CARTESIAN)))
                 .addTemporalCallback(0, () -> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
 
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabSecond = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(42, 69.500, Point.CARTESIAN),
+                .addPath(new BezierCurve(new Point(42.4, 69.500, Point.CARTESIAN),
                         new Point(23.308, 73.615, Point.CARTESIAN),
                         new Point(45.692, 23.077, Point.CARTESIAN),
                         new Point(15.5, 29, Point.CARTESIAN)))
@@ -160,12 +161,12 @@ public class FiveNuggets extends ActionOpMode {
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our park path. We are using a BezierCurve with 3 points, which is a curved line that is curved based off of the control point */
-        scoreSecond = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(42, 71.000)))
+        scoreSecond = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(42.4, 71.000)))
                 .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
-        grabThird = follower.pathBuilder().addPath(new BezierCurve(new Point(42.000, 71.000, Point.CARTESIAN),
+        grabThird = follower.pathBuilder().addPath(new BezierCurve(new Point(42.400, 71.000, Point.CARTESIAN),
                         new Point(23.308, 73.615, Point.CARTESIAN),
                         new Point(45.692, 23.077, Point.CARTESIAN),
                         new Point(15.5, 29.000, Point.CARTESIAN)))
@@ -173,12 +174,12 @@ public class FiveNuggets extends ActionOpMode {
                 .addParametricCallback(.2, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.intakeSpecimen(), liftActions.liftA.pivotUp())))
                 .build();
 
-        scoreThird = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(42, 73.000)))
+        scoreThird = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(42.4, 73.000)))
                 .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen(), servoActions.armA.normal())))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
-        park = follower.pathBuilder().addPath(new BezierCurve(new Point(42.000, 73.000, Point.CARTESIAN),
+        park = follower.pathBuilder().addPath(new BezierCurve(new Point(42.400, 73.000, Point.CARTESIAN),
                 new Point(10.846, 74.077, Point.CARTESIAN),
                 new Point(40.846, 21.462, Point.CARTESIAN),
                 new Point(59.077, 21.692, Point.CARTESIAN),
@@ -187,6 +188,7 @@ public class FiveNuggets extends ActionOpMode {
                 .setConstantHeadingInterpolation(0)
                 .addPath(new BezierLine( new Point(58.154, 9, Point.CARTESIAN),
                         new Point(11.000, 9, Point.CARTESIAN)))
+                .addParametricCallback(0.4, ()-> run(servoActions.armA.armGanch()))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
@@ -295,7 +297,7 @@ public class FiveNuggets extends ActionOpMode {
         liftActions = new LiftActions(lift);
         servoActions = new ServoActions(arm);
 
-        run(new ParallelAction(servoActions.armA.close(), servoActions.armA.armClip(), servoActions.armA.normal(), servoActions.armA.pitchSpecimen()));
+        run(new ParallelAction(servoActions.armA.close(), servoActions.armA.armClip(), servoActions.armA.normal(), servoActions.armA.pitchSpecimen(), servoActions.armA.armInit(), liftActions.liftA.pivotInit(), servoActions.armA.pitchInit()));
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);

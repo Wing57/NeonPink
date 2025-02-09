@@ -28,10 +28,10 @@ object Constants {
         const val CLOSE = 0.3
 
         const val ARM_SEARCH = 0.6
-        const val ARM_INTAKE = 0.46
+        const val ARM_INTAKE = 0.4
         const val ARM_BUCKET = 0.5
         const val ARM_SPECIMEN = 0.8
-        const val ARM_CLIP = 0.17
+        const val ARM_CLIP = 0.08 //.17
 
         const val PITCH_SEARCH = .3
         const val PITCH_GRAB = 0.24

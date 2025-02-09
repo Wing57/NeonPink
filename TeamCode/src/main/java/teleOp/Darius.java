@@ -292,7 +292,7 @@ public class Darius extends LinearOpMode {
                 break;
 
             case STORE:
-                targetX = Constants.Lift.ZERO;
+                targetX = 5000;
                 setArm(0.5);
                 // pitch.setPosition(0.4);
 

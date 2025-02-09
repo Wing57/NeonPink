@@ -101,6 +101,10 @@ public class ServoActions {
             return setArm(Constants.Servos.ARM_BUCKET);
         }
 
+        public Action armInit() { return setArm(0.5); }
+
+        public Action pitchInit() { return setPitch(Constants.Servos.PITCH_AUTO_INIT); }
+
         public Action armGanch() {
             return setArm(Constants.Servos.ARM_CLIP);
         }
