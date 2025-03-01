@@ -28,7 +28,7 @@ public class Darius extends LinearOpMode {
     private DcMotorEx extend1, extend2, leftPivot, rightPivot;
     private List<DcMotorEx> allmotors;
 
-    private Servo pitch, twist, claw, left, right, leftLED, rightLED;
+    private Servo pitch, twist, claw, right, leftLED, rightLED;
 
 
     public static PIDController controllerX, controllerV;
@@ -98,7 +98,6 @@ public class Darius extends LinearOpMode {
         leftPivot = hardwareMap.get(DcMotorEx.class, "leftArm");
         rightPivot = hardwareMap.get(DcMotorEx.class, "rightArm");
 
-        left = hardwareMap.get(Servo.class, "left");
         right = hardwareMap.get(Servo.class, "right");
         pitch = hardwareMap.get(Servo.class, "pitch");
         twist = hardwareMap.get(Servo.class, "twist");
@@ -312,12 +311,15 @@ public class Darius extends LinearOpMode {
                 break;
 
             case FEED:
-                targetV = Constants.Lift.UP;
-                setArm(Servos.ARM_SPECIMEN);
+                targetV = Constants.Lift.DOWN;
+                targetX = Constants.Lift.SUBMERSIBLE;
+                setArm(Servos.ARM_SEARCH);
+                pitch.setPosition(Servos.PITCH_GRAB);
 
                 if (gamepad1.right_stick_button) {
                     claw.setPosition(Servos.OPEN);
                     twistPos = Servos.TWIST_NORMAL;
+                    targetX = 10000;
                     state = States.SEARCHING;
                 }
 
@@ -391,7 +393,6 @@ public class Darius extends LinearOpMode {
     }
 
     public void setPivot(double pos) {
-        left.setPosition(pos);
         right.setPosition(pos);
     }
 
@@ -406,7 +407,6 @@ public class Darius extends LinearOpMode {
     }
 
     public void setArm(double pos) {
-        left.setPosition(pos);
         right.setPosition(pos);
     }
 
