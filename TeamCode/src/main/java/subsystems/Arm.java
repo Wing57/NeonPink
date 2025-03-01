@@ -5,18 +5,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Arm {
 
-    private Servo pitch, twist, claw, left, right;
+    private Servo pitch, twist, claw, right, sweeper;
 
     public Arm(HardwareMap hardwareMap) {
-        left = hardwareMap.get(Servo.class, "left");
         right = hardwareMap.get(Servo.class, "right");
         pitch = hardwareMap.get(Servo.class, "pitch");
         twist = hardwareMap.get(Servo.class, "twist");
         claw = hardwareMap.get(Servo.class, "claw");
+        sweeper = hardwareMap.get(Servo.class, "sweeper");
     }
 
     public void setArm(double pos) {
-        left.setPosition(pos);
         right.setPosition(pos);
     }
 
@@ -31,6 +30,8 @@ public class Arm {
     public void setClaw(double pos) {
         claw.setPosition(pos);
     }
+
+    public void sweep(double pos) { sweeper.setPosition(pos); }
 
     public void updateServos() {
 

@@ -5,6 +5,8 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 
+import org.firstinspires.ftc.robotcore.external.Const;
+
 import pedroPathing.constants.Constants;
 import subsystems.Arm;
 
@@ -81,6 +83,13 @@ public class ServoActions {
             };
         }
 
+        public Action setSweep(double pos) {
+            return t -> {
+                arm.sweep(pos);
+                return false;
+            };
+        }
+
         public Action open() {
             return setClaw(Constants.Servos.OPEN);
         }
@@ -115,6 +124,14 @@ public class ServoActions {
 
         public Action abnormal() {
             return setTwist(Constants.Servos.TWIST_ABNORMAL);
+        }
+
+        public Action sweepDown() {
+            return setSweep(Constants.Servos.SWEEP_DOWN);
+        }
+
+        public Action sweepUp() {
+            return setSweep(Constants.Servos.SWEEP_UP);
         }
     }
 }
