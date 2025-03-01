@@ -27,20 +27,20 @@ object Constants {
         const val OPEN = 0.48
         const val CLOSE = 0.3
 
-        const val ARM_SEARCH = 0.6
-        const val ARM_INTAKE = 0.4
+        const val ARM_SEARCH = 0.6 //good
+        const val ARM_INTAKE = 0.3  //good
         const val ARM_BUCKET = 0.5
-        const val ARM_SPECIMEN = 0.8
-        const val ARM_CLIP = 0.08 //.17
+        const val ARM_SPECIMEN = 0.9 // good
+        const val ARM_CLIP = 0.0//good
 
         const val PITCH_SEARCH = .3
-        const val PITCH_GRAB = 0.24
+        const val PITCH_GRAB = 0.94 //good
         const val PITCH_BUCKET = 0.8
-        const val PITCH_SPECIMEN = 0.68
-        const val PITCH_AUTO_INIT = 0.1
+        const val PITCH_SPECIMEN = 0.65 // good
+        const val PITCH_AUTO_INIT = 0.95
 
-        const val TWIST_ABNORMAL = 0.72
-        const val TWIST_NORMAL = 0.16
+        const val TWIST_ABNORMAL = 0.16 //good
+        const val TWIST_NORMAL = 0.72 //good
 
     }
 }

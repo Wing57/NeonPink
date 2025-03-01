@@ -293,7 +293,7 @@ public class Darius extends LinearOpMode {
 
             case STORE:
                 targetX = 5000;
-                setArm(0.5);
+                setArm(0.63);
                 // pitch.setPosition(0.4);
 
                 if (gamepad1.back) {
