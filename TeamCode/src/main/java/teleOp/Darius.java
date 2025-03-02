@@ -214,7 +214,7 @@ public class Darius extends LinearOpMode {
                 pitch.setPosition(Constants.Servos.PITCH_SPECIMEN);
 
                 if (gamepad1.a) {
-                    setArm(0.5);
+                    setArm(0.3);
                     targetX = 1000;
                     eventTimer.reset();
                     update = false;

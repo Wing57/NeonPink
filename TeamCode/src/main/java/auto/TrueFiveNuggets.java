@@ -138,56 +138,66 @@ public class TrueFiveNuggets extends ActionOpMode {
                 .addPath(
                         new BezierLine(
                                 new Point(25.000, 31.000, Point.CARTESIAN),
-                                new Point(30, 25.000, Point.CARTESIAN)
+                                new Point(31, 27.00, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-130), Math.toRadians(0))
-                .addParametricCallback(.45, ()-> run(servoActions.armA.sweepDown()))
+                .addParametricCallback(.42, ()-> run(servoActions.armA.sweepDown()))
                 .addPath(
                         new BezierLine(
-                                new Point(30, 25.000, Point.CARTESIAN),
-                                new Point(22.000, 25.000, Point.CARTESIAN)
+                                new Point(31, 27.00, Point.CARTESIAN),
+                                new Point(22.000, 27.00, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-130))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-150))
                 .build();
 
-        /* This is our grabPickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        /* This is our grabPickup3 PathChain. We xare using a single path with a BezierLine, which is a straight line. */
         thirdFerry = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(22.000, 25.000, Point.CARTESIAN),
-                                new Point(30, 18.00, Point.CARTESIAN)
+                                new Point(22.000, 27.00, Point.CARTESIAN),
+                                new Point(38, 22.50, Point.CARTESIAN)
                         )
                 )
-                .addParametricCallback(.4, ()-> run(servoActions.armA.sweepDown()))
-                .setLinearHeadingInterpolation(Math.toRadians(-130), Math.toRadians(0))
+                .addParametricCallback(.2, ()-> run(servoActions.armA.sweepDown()))
+                .setLinearHeadingInterpolation(Math.toRadians(-150), Math.toRadians(-25))
                 .addPath(
                         new BezierLine(
-                                new Point(30, 18.000, Point.CARTESIAN),
-                                new Point(24, 22.000, Point.CARTESIAN)
+                                new Point(38, 22.500, Point.CARTESIAN),
+                                new Point(24, 22.500, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-130))
+                .setLinearHeadingInterpolation(Math.toRadians(-25), Math.toRadians(-100))
                 .build();
 
         /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabFirst = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(24, 22.000, Point.CARTESIAN),
+                                new Point(24, 22.500, Point.CARTESIAN),
                                 new Point(15.000, 16.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-130), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-100), Math.toRadians(0))
                 .addParametricCallback(0.1, () -> servoActions.intakeSpecimen())
                 .build();
 
         /* This is our park path. We are using a BezierCurve with 3 points, which is a curved line that is curved based off of the control point */
-        scoreSecond = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(42.4, 71.000)))
-                .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
-                .setConstantHeadingInterpolation(0)
-                .build();
+        scoreFirst = follower.pathBuilder().addPath(new BezierCurve(new Point(15, 16, Point.CARTESIAN),
+                        new Point(20.308, 65.769, Point.CARTESIAN),
+                        new Point(42.4, 69.500, Point.CARTESIAN)))
+                .addTemporalCallback(0, () -> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
+
+                .setConstantHeadingInterpolation(0)                .build();
+
+        grabSecond = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(42.4, 69.500, Point.CARTESIAN),
+                        new Point(23.308, 73.615, Point.CARTESIAN),
+                        new Point(45.692, 23.077, Point.CARTESIAN),
+                        new Point(15.5, 29, Point.CARTESIAN)))
+                .addParametricCallback(.2, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.intakeSpecimen(), liftActions.liftA.pivotUp())))
+                .setConstantHeadingInterpolation(0)                .build();
 
         grabThird = follower.pathBuilder().addPath(new BezierCurve(new Point(42.400, 71.000, Point.CARTESIAN),
                         new Point(23.308, 73.615, Point.CARTESIAN),
@@ -229,21 +239,20 @@ public class TrueFiveNuggets extends ActionOpMode {
                 .addWaitAction(0, new ParallelAction(liftActions.liftA.pivotUp(), servoActions.armA.sweepUp()));
         tasks.add(firstFerryTask);
 
-        PathChainTask secondFerryTask = new PathChainTask(secondFerry, 0.2)
-                .addWaitAction(0, new ParallelAction(servoActions.armA.sweepUp()));
+        PathChainTask secondFerryTask = new PathChainTask(secondFerry, 0);
         tasks.add(secondFerryTask);
 
         PathChainTask thirdFerryTask = new PathChainTask(thirdFerry, 0.2)
                 .addWaitAction(0, new ParallelAction(servoActions.armA.sweepUp()));
         tasks.add(thirdFerryTask);
 
-        PathChainTask grabFirstTask = new PathChainTask(grabFirst, 0.5)
+       PathChainTask grabFirstTask = new PathChainTask(grabFirst, 0.5)
                 .addWaitAction(0.3, servoActions.acquireSpecimen());
         tasks.add(grabFirstTask);
-
-        PathChainTask scoreSecondTask = new PathChainTask(scoreSecond, 0.9)
+        /*
+        PathChainTask scoreFirstTask = new PathChainTask(scoreFirst, 0.9)
                 .addWaitAction(0.65, servoActions.scoreSpecimen());
-        tasks.add(scoreSecondTask);
+        tasks.add(scoreFirstTask);
 
         PathChainTask grabThirdTask = new PathChainTask(grabThird, .5)
                 .addWaitAction(0.3, servoActions.acquireSpecimen());
@@ -254,7 +263,7 @@ public class TrueFiveNuggets extends ActionOpMode {
         tasks.add(scoreThirdTask);
 
         PathChainTask pathTask = new PathChainTask(park, 0);
-        tasks.add(pathTask);
+        tasks.add(pathTask); */
     }
 
     private void runTasks() {
@@ -320,7 +329,7 @@ public class TrueFiveNuggets extends ActionOpMode {
         liftActions = new LiftActions(lift);
         servoActions = new ServoActions(arm);
 
-        run(new ParallelAction(servoActions.armA.close(), servoActions.armA.armClip(), servoActions.armA.normal(), servoActions.armA.pitchSpecimen(), servoActions.armA.armInit(), liftActions.liftA.pivotInit(), servoActions.armA.pitchInit()));
+        run(new ParallelAction(servoActions.armA.close(), servoActions.armA.armClip(), servoActions.armA.normal(), servoActions.armA.pitchSpecimen(), servoActions.armA.armInit(), liftActions.liftA.pivotInit(), servoActions.armA.pitchInit(), servoActions.armA.sweepInit()));
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);

@@ -133,5 +133,9 @@ public class ServoActions {
         public Action sweepUp() {
             return setSweep(Constants.Servos.SWEEP_UP);
         }
+
+        public Action sweepInit() {
+            return setSweep(0.35);
+        }
     }
 }
