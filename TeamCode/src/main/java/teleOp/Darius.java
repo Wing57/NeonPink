@@ -172,7 +172,7 @@ public class Darius extends LinearOpMode {
                 setArm(Constants.Servos.ARM_SEARCH);
 
                 if (gamepad1.right_trigger > 0.1) {
-                    twistPos = 0.44;
+                    twistPos = 0.65;
                 }
                 if (gamepad1.left_trigger > 0.1 ){
                     twistPos = Servos.TWIST_NORMAL;

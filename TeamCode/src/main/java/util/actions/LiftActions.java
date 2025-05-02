@@ -71,5 +71,15 @@ public class LiftActions {
         public Action extendSpecimen() {
             return setExtendPosition(Constants.Lift.CLIP);
         }
+//nick was here
+        public Action extendBucket() {
+            return setExtendPosition(Constants.Lift.TOP_BUCKET);
+        }
+
+
+        public Action extendAuto() {
+            return setExtendPosition(40000);
+        }
+
     }
 }

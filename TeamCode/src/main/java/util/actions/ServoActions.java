@@ -102,6 +102,14 @@ public class ServoActions {
             return setPitch(Constants.Servos.PITCH_SPECIMEN);
         }
 
+        public Action pitchGrab() {
+            return setPitch(Constants.Servos.PITCH_GRAB);
+        }
+
+        public Action pitchBucket() {
+            return setPitch(Constants.Servos.PITCH_BUCKET);
+        }
+
         public Action armSpecimen() {
             return setArm(Constants.Servos.ARM_SPECIMEN);
         }
@@ -111,6 +119,15 @@ public class ServoActions {
         }
 
         public Action armInit() { return setArm(0.5); }
+
+        public Action armSearch() { return setArm(Constants.Servos.ARM_SEARCH); }
+
+        public Action armGrab() { return setArm(Constants.Servos.ARM_INTAKE); }
+
+        public Action armBucket() { return setArm(Constants.Servos.ARM_BUCKET); }
+
+
+
 
         public Action pitchInit() { return setPitch(Constants.Servos.PITCH_AUTO_INIT); }
 
