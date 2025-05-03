@@ -66,7 +66,7 @@ public class Darius extends LinearOpMode {
     States state = States.SEARCHING;
 
     private ElapsedTime eventTimer;
-    boolean update = false;
+    boolean update, initUpdate = false;
     boolean updateAlter = true;
 
     @Override
@@ -149,7 +149,6 @@ public class Darius extends LinearOpMode {
             leftLED.setPosition(0.722);
             rightLED.setPosition(0.722);
 
-
             stateHandler();
 
             telemetry.addData("extend: ", getExtension());
@@ -166,10 +165,11 @@ public class Darius extends LinearOpMode {
     public void stateHandler() {
         switch (state) {
             case SEARCHING:
+                setArm(Constants.Servos.ARM_SEARCH);
                 claw.setPosition(Constants.Servos.OPEN);
                 targetV = Constants.Lift.DOWN;
-                pitch.setPosition(Servos.PITCH_GRAB);
-                setArm(Constants.Servos.ARM_SEARCH);
+
+                pitch.setPosition(Servos.PITCH_SEARCH);
 
                 if (gamepad1.right_trigger > 0.1) {
                     twistPos = 0.65;
@@ -292,7 +292,7 @@ public class Darius extends LinearOpMode {
 
             case STORE:
                 targetX = 5000;
-                setArm(0.63);
+                setArm(Servos.ARM_STORE);
                 // pitch.setPosition(0.4);
 
                 if (gamepad1.back) {

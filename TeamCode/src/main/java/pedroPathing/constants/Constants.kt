@@ -1,6 +1,7 @@
 package pedroPathing.constants
 
 object Constants {
+    //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
 
     object Drive {
 
@@ -27,14 +28,15 @@ object Constants {
         const val OPEN = 0.48
         const val CLOSE = 0.3
 
-        const val ARM_SEARCH = 0.53 //good
+        const val ARM_SEARCH = 0.45 //good
         const val ARM_INTAKE = 0.3  //good
         const val ARM_BUCKET = 0.43
         const val ARM_SPECIMEN = 0.83 // good
         const val ARM_CLIP = 0.0//good
+        const val ARM_STORE = 0.53
 
-        const val PITCH_SEARCH = .3
-        const val PITCH_GRAB = 0 // good
+        const val PITCH_SEARCH = 0
+        const val PITCH_GRAB = 0.1 // good
         const val PITCH_BUCKET = 1
         const val PITCH_SPECIMEN = 0.7 //
         const val PITCH_AUTO_INIT = 0.95

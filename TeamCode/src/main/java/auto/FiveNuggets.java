@@ -146,7 +146,7 @@ public class FiveNuggets extends ActionOpMode {
         scoreFirst = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(15.5, 14.538, Point.CARTESIAN),
                         new Point(20.308, 65.769, Point.CARTESIAN),
-                        new Point(42.4, 69.500, Point.CARTESIAN)))
+                        new Point(43.2, 69.500, Point.CARTESIAN)))
                 .addTemporalCallback(0, () -> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
 
                 .setConstantHeadingInterpolation(0)                .build();
@@ -161,7 +161,7 @@ public class FiveNuggets extends ActionOpMode {
                 .setConstantHeadingInterpolation(0)                .build();
 
         /* This is our park path. We are using a BezierCurve with 3 points, which is a curved line that is curved based off of the control point */
-        scoreSecond = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(42.4, 71.000)))
+        scoreSecond = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(43.4, 71.000)))
                 .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen())))
                 .setConstantHeadingInterpolation(0)
                 .build();
@@ -174,7 +174,7 @@ public class FiveNuggets extends ActionOpMode {
                 .addParametricCallback(.2, ()-> run(new ParallelAction(liftActions.liftA.extendZero(), servoActions.intakeSpecimen(), liftActions.liftA.pivotUp())))
                 .build();
 
-        scoreThird = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(42.4, 73.000)))
+        scoreThird = follower.pathBuilder().addPath(new BezierLine(new Point(15.5, 29, Point.CARTESIAN), /* Control Point */ new Point(43.4, 73.000)))
                 .addParametricCallback(0.2, ()-> run(new ParallelAction(liftActions.liftA.extendSpecimen(), servoActions.armA.normal())))
                 .setConstantHeadingInterpolation(0)
                 .build();
