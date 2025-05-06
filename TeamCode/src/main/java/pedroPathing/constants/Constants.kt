@@ -35,7 +35,7 @@ object Constants {
         const val ARM_CLIP = 0.0//good
         const val ARM_STORE = 0.53
 
-        const val PITCH_SEARCH = 0
+        const val PITCH_SEARCH = 0.2
         const val PITCH_GRAB = 0.1 // good
         const val PITCH_BUCKET = 1
         const val PITCH_SPECIMEN = 0.7 //
